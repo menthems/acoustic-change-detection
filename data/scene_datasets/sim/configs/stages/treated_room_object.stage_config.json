@@ -1,0 +1,12 @@
+{
+
+  "up": [0, 0, 1],
+  "front": [0, 1, 0],
+  "render_asset": "../../stages/treated_room_object.glb",
+  "semantic_asset": "../../stages/treated_room_object_semantic.ply",
+  "semantic_descriptor_filename": "../../stages/treated_room_object.house",
+  "requires_lighting": true,
+  "semantic_up": [0, 0, 1],
+  "semantic_front": [0, 1, 0],
+  "origin": [0, 0, 0]
+}

@@ -1,0 +1,7 @@
+{
+  "stage_instance": {
+    "template_name": "stages/treated_room_object"
+  },
+  "default_lighting": "lighting/no_lights",
+  "object_instances": []
+}

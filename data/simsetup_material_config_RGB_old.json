@@ -1,0 +1,70 @@
+{
+  "materials": [
+    {
+      "name": "unlabeled",
+      "id": 254,
+      "object_id": 254,
+      "nyu_id": 0,
+      "mapped_id": 0,
+      "mapped_label": "unlabeled",
+      "absorption": [20.0, 0.1, 20000.0, 0.1],
+      "scattering": [20.0, 0.5, 20000.0, 0.5],
+      "transmission": [20.0, 0.0, 20000.0, 0.0],
+      "labels": ["unlabeled"],
+      "damping": [20.0, 0.0, 20000.0, 0.0],
+      "density": 1000.0,
+      "speed": 1500.0
+    },
+    {
+      "name": "floor",
+      "id": 1,
+      "object_id": 1,
+      "nyu_id": 1,
+      "mapped_id": 1,
+      "mapped_label": "floor",
+      "absorption": [20.0, 0.1, 20000.0, 0.1],
+      "scattering": [20.0, 0.5, 20000.0, 0.5],
+      "transmission": [20.0, 0.0, 20000.0, 0.0],
+      "labels": ["floor"],
+      "damping": [20.0, 0.0, 20000.0, 0.0],
+      "density": 1000.0,
+      "speed": 1500.0
+    },
+    {
+      "name": "wall",
+      "id": 2,
+      "object_id": 2,
+      "nyu_id": 2,
+      "mapped_id": 2,
+      "mapped_label": "wall",
+      "absorption": [20.0, 0.1, 20000.0, 0.1],
+      "scattering": [20.0, 0.5, 20000.0, 0.5],
+      "transmission": [20.0, 0.0, 20000.0, 0.0],
+      "labels": ["wall"]
+    },
+    {
+      "name": "ceiling",
+      "id": 3,
+      "object_id": 3,
+      "nyu_id": 3,
+      "mapped_id": 1,
+      "mapped_label": "ceiling",
+      "absorption": [20.0, 0.1, 20000.0, 0.1],
+      "scattering": [20.0, 0.5, 20000.0, 0.5],
+      "transmission": [20.0, 0.0, 20000.0, 0.0],
+      "labels": ["ceiling"]
+    },
+    {
+      "name": "sofa",
+      "id": 4,
+      "object_id": 4,
+      "nyu_id": 4,
+      "mapped_id": 4,
+      "mapped_label": "sofa",
+      "absorption": [20.0, 0.1, 20000.0, 0.1],
+      "scattering": [20.0, 0.5, 20000.0, 0.5],
+      "transmission": [20.0, 0.0, 20000.0, 0.0],
+      "labels": ["sofa"]
+    }
+  ]
+}

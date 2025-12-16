@@ -1,0 +1,11 @@
+data/output/
+data/scene_datasets/examples/
+data/scene_datasets/mp3d/
+data/scene_datasets/replica_cad/
+data/scene_datasets/temp/
+data/scene_datasets/trial/
+data/scene_datasets/try_old/
+data/convolution_output.ipynb
+data/create_ply_file.ipynb
+*.wav
+data/ground_truth_distances.ipynb

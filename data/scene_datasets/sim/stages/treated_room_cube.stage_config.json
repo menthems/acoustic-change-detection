@@ -1,0 +1,11 @@
+{
+  "render_asset": "treated_room_cube.glb",
+  "up": [0, 0, 1],
+  "front": [0, 1, 0],
+  "collision_asset": "treated_room_cube.glb",
+  "semantic_asset": "treated_room_cube_semantic.ply",
+  "semantic_descriptor_filename": "treated_room_cube.house",
+  "semantic_up": [0, 0, 1],
+  "semantic_front": [0, 1, 0],
+  "origin": [0, 0, 0]
+}

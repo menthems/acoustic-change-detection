@@ -1,0 +1,10 @@
+{
+  "lights": {
+    "0": {
+      "type": "point",
+      "position": [0.0, 2.6, 0.0],
+      "intensity": 3.64, 
+      "color": [0.93, 0.98, 1]
+    }
+  }
+}

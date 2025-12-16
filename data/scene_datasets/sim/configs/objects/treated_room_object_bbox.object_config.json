@@ -1,0 +1,6 @@
+{
+  "name": "treated_room_object_bbox",
+  "render_asset": "../../objects/treated_room_object_bbox.glb",
+  "mass": 2,
+  "join_collision_meshes": false
+}

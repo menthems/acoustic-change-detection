@@ -1,0 +1,40 @@
+{
+  "stages": {
+    "paths": {
+      ".json": [
+        "configs/stages"
+      ]
+    }
+  },
+  "objects": {
+    "paths": {
+      ".json": [
+        "configs/objects"
+      ]
+    }
+  },
+  "light_setups": {
+    "default_attributes": {
+      "positive_intensity_scale": 2.5,
+      "negative_intensity_scale": 0.1
+    },
+    "paths": {
+      ".json": [
+        "configs/lighting"
+      ]
+    }
+  },
+  "scene_instances": {
+    "default_attributes": {
+      "semantic_scene_instance": "ssd_map"
+    },
+    "paths": {
+      ".json": [
+        "configs/scenes"
+      ]
+    }
+  },
+  "semantic_scene_descriptor_instances": {
+    "ssd_map": "stages/treated_room_object.house"
+  }
+}

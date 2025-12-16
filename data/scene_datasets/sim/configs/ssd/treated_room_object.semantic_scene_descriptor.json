@@ -1,0 +1,8 @@
+{
+  "semantic_classes": [
+    { "id": 0, "name": "floor",   "category": "floor" },
+    { "id": 1, "name": "wall",    "category": "wall" },
+    { "id": 2, "name": "ceiling", "category": "ceiling" },
+    { "id": 3, "name": "cube",    "category": "cube" }
+  ]
+}

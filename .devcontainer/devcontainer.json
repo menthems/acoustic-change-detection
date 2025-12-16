@@ -1,0 +1,23 @@
+{
+  "name": "SoundSpaces Dev",
+  "image": "soundspaces:U20branches",
+  // "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      // "settings": {
+      //   "terminal.integrated.shell.linux": "/bin/bash"
+      // },
+      // "extensions": [
+      //   "ms-toolsai.jupyter",
+      //   "ms-python.python"
+      // ]
+    }
+  },
+  // "mounts": [
+  //   "source=${localWorkspaceFolder}/data,target=/workspace/data,type=bind",
+  //   "source=${localWorkspaceFolder}/examples,target=/workspace/examples,type=bind"
+  // ],
+  "remoteUser": "root",
+  "overrideCommand": false
+  // "runArgs": ["--entrypoint", "/bin/bash"]
+}
