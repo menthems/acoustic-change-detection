@@ -65,7 +65,7 @@ def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset):
     audio_sensor.setAudioMaterialsJSON("data/simsetup_material_config_soundcam_othermaterial.json")
 
     obs = np.array(sim.get_sensor_observations()["audio_sensor"])
-    wavfile.write('data/output/TRsim_{n}.wav', 48000, obs.T)
+    wavfile.write(f'data/output/TRsim/TRsim_{n}.wav', 48000, obs.T)
 
     sim.close()
 
@@ -74,7 +74,7 @@ scene_dataset_template = "data/scene_datasets/TRsim/TRsim_TEMPLATE.scene_dataset
 tmp_stage = "data/scene_datasets/TRsim/configs/stages/TRsim.stage_config.json"
 tmp_scene_dataset = "data/scene_datasets/TRsim/TRsim.scene_dataset_config.json"
 
-for n in range(1):
+for n in range(5):
     modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
     run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset)
     print(f"Finished {n}")
