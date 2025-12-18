@@ -11,3 +11,4 @@ data/create_ply_file.ipynb
 data/ground_truth_distances.ipynb
 *_semantic.ply
 *_ascii.ply
+*.house
