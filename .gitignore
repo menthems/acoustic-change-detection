@@ -12,3 +12,5 @@ data/ground_truth_distances.ipynb
 *_semantic.ply
 *_ascii.ply
 *.house
+TRsim.scene_dataset_config.json
+TRsim.stage_config.json
