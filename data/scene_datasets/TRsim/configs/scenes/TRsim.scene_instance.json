@@ -1,0 +1,7 @@
+{
+  "stage_instance": {
+    "template_name": "stages/TRsim"
+  },
+  "default_lighting": "lighting/no_lights",
+  "object_instances": []
+}
