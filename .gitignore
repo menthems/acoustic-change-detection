@@ -9,3 +9,5 @@ data/convolution_output.ipynb
 data/create_ply_file.ipynb
 *.wav
 data/ground_truth_distances.ipynb
+*_semantic.ply
+*_ascii.ply
