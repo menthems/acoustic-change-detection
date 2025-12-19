@@ -21,7 +21,7 @@ def modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tm
     with open(tmp_scene_dataset, "w") as f:
         json.dump(scene_dataset_cfg, f, indent=2)
 
-def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset):
+def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=-1, save_wav=False):
     backend_cfg = habitat_sim.SimulatorConfiguration()
     backend_cfg.scene_id = "TRsim" #"data/scene_datasets/sim/stages/.glb" #"data/scene_datasets/sim/configs/scenes/not_empty.scene_instance.json" #"data/scene_datasets/sim/stages/cube_stage.glb" #"data/scene_datasets/trial/try/cube_15153.glb" #try5.glb"
     backend_cfg.scene_dataset_config_file = tmp_scene_dataset
@@ -37,7 +37,7 @@ def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset):
     audio_sensor_spec.orientation = mn.Vector3(0.0, 0.0, 0.0)
     audio_sensor_spec.acousticsConfig.sampleRate = 48000
     audio_sensor_spec.acousticsConfig.indirect = True
-    audio_sensor_spec.acousticsConfig.indirectRayCount = 5000 #50000000 # default: 5000; removes the vertical bands (due to directivity, not all rays come back to the microphone)
+    audio_sensor_spec.acousticsConfig.indirectRayCount = 50000000 # default: 5000; removes the vertical bands (due to directivity, not all rays come back to the microphone)
     audio_sensor_spec.acousticsConfig.indirectRayDepth = 300
     audio_sensor_spec.acousticsConfig.sourceRayCount = 2000 # default: 200
     audio_sensor_spec.acousticsConfig.indirectSHOrder = 1
@@ -65,16 +65,33 @@ def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset):
     audio_sensor.setAudioMaterialsJSON("data/simsetup_material_config_soundcam_othermaterial.json")
 
     obs = np.array(sim.get_sensor_observations()["audio_sensor"])
-    wavfile.write(f'data/output/TRsim/TRsim_{n}.wav', 48000, obs.T)
+
+    if save_wav:
+        wavfile.write(f'data/output/TRsim/TRsim_{n}.wav', 48000, obs.T)
 
     sim.close()
+
+    obs = obs[:, :audio_samples]
+    
+    return obs
 
 stage_template = "data/scene_datasets/TRsim/configs/stages/TRsim_TEMPLATE.stage_config.json"
 scene_dataset_template = "data/scene_datasets/TRsim/TRsim_TEMPLATE.scene_dataset_config.json"
 tmp_stage = "data/scene_datasets/TRsim/configs/stages/TRsim.stage_config.json"
 tmp_scene_dataset = "data/scene_datasets/TRsim/TRsim.scene_dataset_config.json"
 
-for n in range(5):
+N = 2                   # amount of RIRs (up to 1000)            
+MIC_CHANNELS = 1        # amount of mic channels
+AUDIO_SAMPLES = 48000   # amount of samples to save in the .npy
+SAVE_WAV = False        # whether or not to save separate .wav files per RIR
+
+deconvolved = np.zeros((N, MIC_CHANNELS, AUDIO_SAMPLES), dtype=np.float32)
+
+for n in range(N):
     modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
-    run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset)
+    rir = run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
+    deconvolved[n] = rir
     print(f"Finished {n}")
+
+np.save("data/output/TRsim/deconvolved.npy", deconvolved)
+print("Saved deconvolved.npy with shape:", deconvolved.shape)
