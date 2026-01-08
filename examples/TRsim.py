@@ -21,7 +21,22 @@ def modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tm
     with open(tmp_scene_dataset, "w") as f:
         json.dump(scene_dataset_cfg, f, indent=2)
 
-def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=-1, save_wav=False):
+def pick_mic_location(mic_idx):
+    mic_locations = {"0" : [3.048000, 1.277938, 3.657600],
+                     "1" : [1.930400, 1.277938, 3.1543625],
+                     "2" : [1.285875, 1.277938, 3.111500],
+                     "3" : [1.193800, 1.277938, 3.111500],
+                     "4" : [0.5445125, 1.277938, 3.152775],
+                     "5" : [-0.609600, 1.277938, 3.657600],
+                     "6" : [-0.692150, 1.277938, 0.577850],
+                     "7" : [1.939925, 1.277938, -0.4651375],
+                     "8" : [2.447925, 1.277938, -0.4651375],
+                     "9" : [3.048000, 1.277938, -0.4651375]
+                    }
+    mic_loc = mic_locations[str(mic_idx)]
+    return mic_loc
+
+def run_soundspaces_per_n(n, tmp_scene_dataset, indirect_ray_count=5000, mic_location=None, audio_samples=-1, save_wav=False):
     backend_cfg = habitat_sim.SimulatorConfiguration()
     backend_cfg.scene_id = "TRsim" #"data/scene_datasets/sim/stages/.glb" #"data/scene_datasets/sim/configs/scenes/not_empty.scene_instance.json" #"data/scene_datasets/sim/stages/cube_stage.glb" #"data/scene_datasets/trial/try/cube_15153.glb" #try5.glb"
     backend_cfg.scene_dataset_config_file = tmp_scene_dataset
@@ -37,7 +52,7 @@ def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=-1, sav
     audio_sensor_spec.orientation = mn.Vector3(0.0, 0.0, 0.0)
     audio_sensor_spec.acousticsConfig.sampleRate = 48000
     audio_sensor_spec.acousticsConfig.indirect = True
-    audio_sensor_spec.acousticsConfig.indirectRayCount = 50000000 # default: 5000; removes the vertical bands (due to directivity, not all rays come back to the microphone)
+    audio_sensor_spec.acousticsConfig.indirectRayCount = indirect_ray_count #50000000 # default: 5000; removes the vertical bands (due to directivity, not all rays come back to the microphone)
     audio_sensor_spec.acousticsConfig.indirectRayDepth = 300
     audio_sensor_spec.acousticsConfig.sourceRayCount = 2000 # default: 200
     audio_sensor_spec.acousticsConfig.indirectSHOrder = 1
@@ -57,7 +72,7 @@ def run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=-1, sav
     axis = np.array([0, 1, 0])
     quat = habitat_sim.utils.quat_from_angle_axis(angle, axis)
     state.rotation = quat
-    state.position = mn.Vector3(-0.692150, 1.277938, 0.577850)
+    state.position = mic_location
     agent.set_state(state)
 
     audio_sensor = sim.get_agent(0)._sensors["audio_sensor"]
@@ -80,18 +95,25 @@ scene_dataset_template = "data/scene_datasets/TRsim/TRsim_TEMPLATE.scene_dataset
 tmp_stage = "data/scene_datasets/TRsim/configs/stages/TRsim.stage_config.json"
 tmp_scene_dataset = "data/scene_datasets/TRsim/TRsim.scene_dataset_config.json"
 
-N = 2                   # amount of RIRs (up to 1000)            
+N = 1                # amount of RIRs (up to 1000)            
 MIC_CHANNELS = 1        # amount of mic channels
+MIC_IDX = 0
 AUDIO_SAMPLES = 48000   # amount of samples to save in the .npy
-SAVE_WAV = False        # whether or not to save separate .wav files per RIR
+SAVE_WAV = True        # whether or not to save separate .wav files per RIR
+INDIRECT_RAY_COUNT = 500000
 
 deconvolved = np.zeros((N, MIC_CHANNELS, AUDIO_SAMPLES), dtype=np.float32)
 
+mic_location = pick_mic_location(MIC_IDX)
+
+print(f"Creating {N} RIRs at an indirect ray count of {INDIRECT_RAY_COUNT}")
+print(f"For microphone {MIC_IDX} at location {mic_location}")
+
 for n in range(N):
     modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
-    rir = run_soundspaces_per_n(n, tmp_stage, tmp_scene_dataset, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
+    rir = run_soundspaces_per_n(n, tmp_scene_dataset, indirect_ray_count=INDIRECT_RAY_COUNT, mic_location=mic_location, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
     deconvolved[n] = rir
-    print(f"Finished {n}")
+    print(f"Finished RIR no.{n+1}")
 
-np.save("data/output/TRsim/deconvolved.npy", deconvolved)
-print("Saved deconvolved.npy with shape:", deconvolved.shape)
+np.save(f"data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy", deconvolved)
+print(f"Saved data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy with shape:", deconvolved.shape)
