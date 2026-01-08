@@ -95,25 +95,26 @@ scene_dataset_template = "data/scene_datasets/TRsim/TRsim_TEMPLATE.scene_dataset
 tmp_stage = "data/scene_datasets/TRsim/configs/stages/TRsim.stage_config.json"
 tmp_scene_dataset = "data/scene_datasets/TRsim/TRsim.scene_dataset_config.json"
 
-N = 1                # amount of RIRs (up to 1000)            
-MIC_CHANNELS = 1        # amount of mic channels
-MIC_IDX = 0
+N = 1000                # amount of RIRs (up to 1000)            
+MIC_CHANNELS = 10       # amount of mic channels
+# MIC_IDX = 9             # for single mic RIR files
 AUDIO_SAMPLES = 48000   # amount of samples to save in the .npy
-SAVE_WAV = True        # whether or not to save separate .wav files per RIR
+SAVE_WAV = False        # whether or not to save separate .wav files per RIR
 INDIRECT_RAY_COUNT = 500000
 
-deconvolved = np.zeros((N, MIC_CHANNELS, AUDIO_SAMPLES), dtype=np.float32)
+deconvolved = np.zeros((N, 1, AUDIO_SAMPLES), dtype=np.float32)
 
-mic_location = pick_mic_location(MIC_IDX)
+for MIC_IDX in range(MIC_CHANNELS):
+    mic_location = pick_mic_location(MIC_IDX)
 
-print(f"Creating {N} RIRs at an indirect ray count of {INDIRECT_RAY_COUNT}")
-print(f"For microphone {MIC_IDX} at location {mic_location}")
+    print(f"Creating {N} RIRs at an indirect ray count of {INDIRECT_RAY_COUNT}")
+    print(f"For microphone {MIC_IDX} at location {mic_location}")
 
-for n in range(N):
-    modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
-    rir = run_soundspaces_per_n(n, tmp_scene_dataset, indirect_ray_count=INDIRECT_RAY_COUNT, mic_location=mic_location, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
-    deconvolved[n] = rir
-    print(f"Finished RIR no.{n+1}")
+    for n in range(N):
+        modify_config_jsons(n, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
+        rir = run_soundspaces_per_n(n, tmp_scene_dataset, indirect_ray_count=INDIRECT_RAY_COUNT, mic_location=mic_location, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
+        deconvolved[n] = rir
+        print(f"Finished RIR no.{n+1}")
 
-np.save(f"data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy", deconvolved)
-print(f"Saved data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy with shape:", deconvolved.shape)
+    np.save(f"data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy", deconvolved)
+    print(f"Saved data/output/TRsim/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy with shape:", deconvolved.shape)
