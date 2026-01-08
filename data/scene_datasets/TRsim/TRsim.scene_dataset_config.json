@@ -35,6 +35,6 @@
     }
   },
   "semantic_scene_descriptor_instances": {
-    "semantics_mapping": "stages/TRsim.house"
+    "semantics_mapping": "stages/TRsim_451.house"
   }
 }

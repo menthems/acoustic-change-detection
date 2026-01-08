@@ -16,3 +16,4 @@ data/scene_datasets/TRsim/TRsim.scene_dataset_config.json
 data/scene_datasets/TRsim/TRsim_viewer.scene_instance.json
 data/scene_datasets/TRsim/TRsim.stage_config.json
 data/wav_viewer.ipynb
+data/scene_datasets/TRsim/configs/stages/TRsim.stage_config.json
