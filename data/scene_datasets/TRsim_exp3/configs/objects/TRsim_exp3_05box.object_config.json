@@ -1,0 +1,6 @@
+{
+  "name": "TRsim_exp3_05box",
+  "render_asset": "../../objects/TRsim_exp3_05box.glb",
+  "mass": 2,
+  "join_collision_meshes": false
+}

@@ -1,0 +1,30 @@
+{
+  "render_asset": "../../stages/base/TRsim_room.glb",
+  "up": [
+    0,
+    0,
+    1
+  ],
+  "front": [
+    0,
+    1,
+    0
+  ],
+  "semantic_asset": "../../stages/TRsim_room1_9_semantic.ply",
+  "requires_lighting": true,
+  "semantic_up": [
+    0,
+    0,
+    1
+  ],
+  "semantic_front": [
+    0,
+    1,
+    0
+  ],
+  "origin": [
+    0,
+    0,
+    0
+  ]
+}
