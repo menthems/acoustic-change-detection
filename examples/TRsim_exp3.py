@@ -59,11 +59,11 @@ def run_soundspaces_per_scene(tmp_scene_dataset, indirect_ray_count=5000, mic_lo
     audio_sensor_spec.acousticsConfig.sampleRate = 48000
     audio_sensor_spec.acousticsConfig.indirect = True
     audio_sensor_spec.acousticsConfig.indirectRayCount = indirect_ray_count #50000000 # default: 5000; removes the vertical bands (due to directivity, not all rays come back to the microphone)
-    audio_sensor_spec.acousticsConfig.indirectRayDepth = 500 #120 #adjusted_mp3d:200 #300
+    # audio_sensor_spec.acousticsConfig.indirectRayDepth = 500 #120 #adjusted_mp3d:200 #300
     audio_sensor_spec.acousticsConfig.sourceRayCount = 50000 # adjusted_mp3d:2000 #default: 200
-    audio_sensor_spec.acousticsConfig.indirectSHOrder = 2
+    # audio_sensor_spec.acousticsConfig.indirectSHOrder = 2
     audio_sensor_spec.acousticsConfig.globalVolume = 1.0 #3.0 #adjusted_mp3d:3.0#270.0 # default: 0.25; adjusts the amplitude of the waveform
-    audio_sensor_spec.acousticsConfig.frequencyBands = 32 #adjusted_mp3d:12 # default: 4
+    audio_sensor_spec.acousticsConfig.frequencyBands = 6 #32 #adjusted_mp3d:12 # default: 4
 
     agent_cfg = habitat_sim.agent.AgentConfiguration()
 
@@ -84,7 +84,7 @@ def run_soundspaces_per_scene(tmp_scene_dataset, indirect_ray_count=5000, mic_lo
     audio_sensor = sim.get_agent(0)._sensors["audio_sensor"]
     audio_sensor.setAudioSourceTransform(np.array([-0.3302, -0.17542, -1.1811]))#[-0.3302, 1.1811, -0.17542]))
     # audio_sensor.setAudioMaterialsJSON("data/simsetup_material_config_soundcam_othermaterial.json")
-    audio_sensor.setAudioMaterialsJSON("data/TRsim_human_material_config.json")
+    audio_sensor.setAudioMaterialsJSON("data/TRsim_exp3_material_config.json")
 
     t_acoustic_start = time.perf_counter()
     obs = np.array(sim.get_sensor_observations()["audio_sensor"])
@@ -107,10 +107,10 @@ N = 2**B                # amount of RIRs (up to 1000)
 MIC_CHANNELS = 1       # amount of mic channels
 # MIC_IDX = 9             # for single mic RIR files
 AUDIO_SAMPLES = 48000   # amount of samples to save in the .npy
-SAVE_WAV = True        # whether or not to save separate .wav files per RIR
-INDIRECT_RAY_COUNT = 50000
+SAVE_WAV = False        # whether or not to save separate .wav files per RIR
+INDIRECT_RAY_COUNT = 30000
 DATA = 'TRsim_exp3'
-FOLDER = 'try1' #'adjusted_mp3d'
+FOLDER = 'meeting29_alpha' #'adjusted_mp3d'
 
 stage_template = f"data/scene_datasets/{DATA}/configs/stages/TRsim_TEMPLATE.stage_config.json"
 scene_dataset_template = f"data/scene_datasets/{DATA}/TRsim_TEMPLATE.scene_dataset_config.json"
@@ -124,19 +124,19 @@ for MIC_IDX in range(MIC_CHANNELS):
 
     print(f"Creating {N} RIRs at an indirect ray count of {INDIRECT_RAY_COUNT}")
     print(f"For microphone {MIC_IDX} at location {mic_location}")
-
-    for n in range(N):
-        for num_to_remove in range(0, B + 1):
-            for boxes_to_remove in itertools.combinations(range(B), num_to_remove):
-                num_removed = len(boxes_to_remove)
-                boxes_str = "".join(map(str, boxes_to_remove))
-                filename = f"TRsim_room{R}_{num_removed}_{boxes_str}_semantic.ply"
-                modify_config_jsons(filename, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
-                rir, duration = run_soundspaces_per_scene(tmp_scene_dataset, indirect_ray_count=INDIRECT_RAY_COUNT, mic_location=mic_location, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
-                deconvolved[n] = rir
-                # print(f"[Timing] Acoustic simulation took " f"{duration:.3f} seconds")
-                # print(f"[Timing] Which means it would take {duration*1000/60:.1f} minutes for 1000 RIRs.")
-                print(f"Finished RIR no.{n+1}")
+    n = 0
+    for num_to_remove in range(0, B + 1):
+        for boxes_to_remove in itertools.combinations(range(B), num_to_remove):
+            num_removed = len(boxes_to_remove)
+            boxes_str = "".join(map(str, boxes_to_remove))
+            filename = f"TRsim_room{R}_{num_removed}_{boxes_str}_semantic.ply"
+            modify_config_jsons(filename, stage_template, tmp_stage, scene_dataset_template, tmp_scene_dataset)
+            rir, duration = run_soundspaces_per_scene(tmp_scene_dataset, indirect_ray_count=INDIRECT_RAY_COUNT, mic_location=mic_location, audio_samples=AUDIO_SAMPLES, save_wav=SAVE_WAV)
+            deconvolved[n] = rir
+            # print(f"[Timing] Acoustic simulation took " f"{duration:.3f} seconds")
+            # print(f"[Timing] Which means it would take {duration*1000/60:.1f} minutes for 1000 RIRs.")
+            print(f"Finished RIR no.{n+1}")
+            n += 1
 
     np.save(f"data/output/{DATA}/{FOLDER}/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy", deconvolved)
     print(f"Saved data/output/{DATA}/{FOLDER}/deconvolved_{N}_{INDIRECT_RAY_COUNT}_mic{MIC_IDX}.npy with shape:", deconvolved.shape)
